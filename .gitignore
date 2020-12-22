@@ -1,0 +1,7 @@
+node_modules
+yarn.lock
+dist
+secret.json
+.env
+size-plugin.json
+package-lock.json

@@ -1,0 +1,16 @@
+{
+    "extensionName": {
+        "message": "Noodle advisor",
+        "description": "Name of the extension"
+    },
+
+    "extensionDescription": {
+        "message": "Finds answers for Moodle quizzes.",
+        "description": "Description of the add-on."
+    },
+
+    "answerButton": {
+        "message": "Find answer",
+        "description": "Title of button that tries to find answer to quiz question."
+    }
+}
