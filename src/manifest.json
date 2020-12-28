@@ -14,6 +14,7 @@
 
     "background": {
         "scripts": [
+            "hot-reload.js",
             "browser-polyfill.min.js",
             "background.js"
         ]
