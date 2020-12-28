@@ -1,3 +1,9 @@
+const moodleSession = document
+    .cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith('MoodleSession='))
+    ?.split('=')[1];
+
 const getAnswer = (event) => {
     const question = event.path.find(el => el.classList.contains('que'));
 
@@ -5,13 +11,17 @@ const getAnswer = (event) => {
         .querySelector('.questionflagpostdata')
         .value
         ?.split('&')
-        .find(id => id.startsWith('qid='))
+        .find((id) => id.startsWith('qid='))
         ?.split('=')[1];
 
     const qid = parseInt(qidString);
+
     browser.runtime.sendMessage({
             type: 'answerClaim',
-            qid
+            request: {
+                domain: window.location.hostname,
+                question_id: qid
+            }
         })
         .then((response) => {
             if (!question.querySelector('.answer-found')) {
@@ -45,22 +55,41 @@ const getAnswer = (event) => {
         });
 };
 
-const moodleSession = document
-    .cookie
-    .split('; ')
-    .find((cookie) => cookie.startsWith('MoodleSession='))
-    ?.split('=')[1];
+const addAnswerButton = (question) => {
+    const formulation = question.querySelector('.formulation');
 
-const elements = document.querySelectorAll('.que');
+    const answerButton = document.createElement('div');
+    answerButton.setAttribute('class', 'submit btn btn-secondary');
+    answerButton.textContent = browser.i18n.getMessage('answerButton');
+    answerButton.addEventListener('click', getAnswer);
 
-if (moodleSession)
-    for (let el of elements) {
-        const formulation = el.querySelector('.formulation');
+    formulation.append(answerButton);
+};
 
-        const answerButton = document.createElement('div');
-        answerButton.setAttribute('class', 'submit btn btn-secondary');
-        answerButton.textContent = browser.i18n.getMessage('answerButton');
-        answerButton.addEventListener('click', getAnswer);
+const submitAttempt = (event) => {
+    browser.runtime.sendMessage({
+            type: 'parseClaim',
+            request: {
+                auth_cookie: moodleSession,
+                attempt_url: window.location.href
+            }
+        })
+        .then((response) => console.log(response))
+        .catch((error) => {
+            console.error(error);
+        });
+};
 
-        formulation.append(answerButton);
+if (moodleSession) {
+    const questions = document.querySelectorAll('.que');
+
+    for (let question of questions) {
+        addAnswerButton(question);
     }
+
+    const submitButton = document.querySelector('.submitbtns > [type=submit]');
+
+    if (submitButton) {
+        submitButton.addEventListener('click', submitAttempt);
+    };
+}
