@@ -42,7 +42,7 @@ const getAnswer = (event) => {
                 answerSection.append(screenshot);
                 question.append(answerSection);
             } else {
-                const answerSection = el.querySelector('.answer-found');
+                const answerSection = document.querySelector('.answer-found');
                 if (response.status === 'CORRECT') {
                     answerSection.setAttribute('style', 'text-align: center');
                 } else {
