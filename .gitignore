@@ -3,5 +3,6 @@ yarn.lock
 dist
 secret.json
 .env
+.envrc
 size-plugin.json
-package-lock.json
+
