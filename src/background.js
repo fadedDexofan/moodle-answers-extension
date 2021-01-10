@@ -1,5 +1,3 @@
-console.log(window.location);
-
 const mockSuccess = {
     id: "e0e41015-2ad3-4a04-a7b6-e0079ad85f17",
     question_id: 123,
@@ -17,18 +15,21 @@ const mockFail = {
 const responseMock = () => (Math.random() > 0.5 ? mockSuccess : mockFail);
 
 browser.runtime.onMessage.addListener(async (data, sender) => {
+    const url = new URL('http://example.com');
+    let response;
+    const request = data.request;
     switch (data.type) {
         case 'answerClaim':
-            const response = await fetch('http://example.com', {
+            Object.keys(request).forEach(key => url.searchParams.append(key, request[key]));
+            response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data.request)
+                }
             });
             return responseMock(); //response.json();
         case 'parseClaim':
-            const response = await fetch('http://example.com', {
+            response = await fetch(url, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
